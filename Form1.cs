@@ -1,256 +1,372 @@
 ﻿using System;
+using System.Collections.Generic;
+using System.ComponentModel;
+using System.Data;
+using System.Drawing;
+using System.Linq;
+using System.Runtime.Remoting.Messaging;
+using System.Text;
+using System.Threading.Tasks;
 using System.Windows.Forms;
 
-namespace FormPizza
+namespace Pizza
 {
-    public partial class Form : System.Windows.Forms.Form
+    public partial class Form1 : Form
     {
-        int Total = 0;
-        public Form()
+        public Form1()
         {
             InitializeComponent();
         }
-        private void GetTotalPrice()
-        {
-            Total = 0;
-            if (radioButtonSm.Checked)
-                Total = Total + 10;
-            else if (radioButtonMe.Checked)
-                Total = Total + 20;
-            else if (radioButtonL.Checked)
-                Total = Total + 30;
-            if (radioButtonThin.Checked)
-                Total = Total + 10;
-            else if (radioButtonThink.Checked)
-                Total = Total + 20;
-            if (checkBoxChees.Checked)
-                Total = Total + 5;
-            if (checkBoxMushrooms.Checked)
-                Total = Total + 5;
-            if (checkBoxOlives.Checked)
-                Total = Total + 5;
-            if (checkBoxOnion.Checked)
-                Total = Total + 5;
-            if (checkBoxPeppers.Checked)
-                Total = Total + 5;
-            if (checkBoxTomatoes.Checked)
-                Total = Total + 5;
-            labelResultTotal.Text = $"${Total}";
 
-
-        }
-        private void radioButton1_CheckedChanged(object sender, EventArgs e)
-        {
-            GetTotalPrice();
-            labelResultSize.Text = "Small";
-
-        }
-
-        private char ToString(int total)
-        {
-            throw new NotImplementedException();
-        }
-
-        private void radioButton1_CheckedChanged_1(object sender, EventArgs e)
+        void UpdateSize()
         {
 
-            GetTotalPrice();
-            labelResultCrust.Text = "Thin Crust";
+            UpdateTotalPrice();
 
-        }
-
-        private void checkBox1_CheckedChanged(object sender, EventArgs e)
-        {
-            GetTotalPrice();
-            if (checkBoxChees.Checked)
+            if (rbSamll.Checked)
             {
-                if (labelResultToppings.Text == "No Toppings")
-                    labelResultToppings.Text = "Extra Chees";
-                else
-                    labelResultToppings.Text = labelResultToppings.Text + " , Extra Chees ";
+                lblSize.Text = "Small";
+                return;
             }
+
+            if (rbMedium.Checked)
+            {
+                lblSize.Text = "Medium";
+                return;
+            }
+
+            if (rbLarge.Checked)
+            {
+                lblSize.Text = "Large";
+                return;
+            }
+
+        }
+
+        void UpdateToppings()
+        {
+
+            UpdateTotalPrice();
+
+            string sToppings = "";
+
+            if (chkExtraChees.Checked)
+            {
+                sToppings = "Extra Chees";
+            }
+
+
+            if (chkOnion.Checked)
+            {
+                sToppings += ", Onion";
+            }
+
+            if (chkMushrooms.Checked)
+            {
+                sToppings += ", Mushrooms";
+            }
+
+            if (chkOlives.Checked)
+            {
+                sToppings += ", Olives";
+            }
+
+            if (chkTomatos.Checked)
+            {
+                sToppings += ", Tomatos";
+            }
+
+            if (chkGreenPeppers.Checked)
+            {
+                sToppings += ", Green Peppars";
+            }
+
+            if (sToppings.StartsWith(","))
+            {
+                sToppings = sToppings.Substring(1, sToppings.Length - 1).Trim();
+            }
+
+            if (sToppings == "")
+                sToppings = "No Toppings";
+
+            lblToppings.Text = sToppings;
+
+
+        }
+
+        void UpdateCrust()
+        {
+            UpdateTotalPrice();
+            if (rbThinCrust.Checked)
+            {
+                lblCrustType.Text = "Think Crust";
+                return;
+            }
+
+            if (rbThickCrust.Checked)
+            {
+                lblCrustType.Text = "Thick Crust";
+                return;
+            }
+
+
+        }
+
+        void UpdateWhereToEat()
+        {
+            UpdateTotalPrice();
+
+            if (rbEatIn.Checked)
+            {
+                lblWhereToEat.Text = "Eat In.";
+                return;
+            }
+
+            if (rbTakeOut.Checked)
+            {
+                lblWhereToEat.Text = "Take Out.";
+                return;
+            }
+
+        }
+
+        float GetSelectedSizePrice()
+        {
+            if (rbSamll.Checked)
+
+                return Convert.ToSingle(rbSamll.Tag);
+
+            else if (rbMedium.Checked)
+
+                return Convert.ToSingle(rbMedium.Tag);
 
             else
-            {
-                if (labelResultToppings.Text == "Extra Chees")
-                    labelResultToppings.Text = "No Toppings";
-                else
-                    labelResultToppings.Text = labelResultToppings.Text.Replace(" , Extra Chees ", "");
-
-            }
+                return Convert.ToSingle(rbLarge.Tag);
 
         }
 
-        private void checkBox3_CheckedChanged(object sender, EventArgs e)
+        float CalculateToppingsPrice()
         {
-            GetTotalPrice();
-            if (checkBoxTomatoes.Checked)
+
+
+            float ToppingsTotalPrice = 0;
+
+            if (chkExtraChees.Checked)
             {
-                if (labelResultToppings.Text == "No Toppings")
-                    labelResultToppings.Text = "Tomatoes";
-                else
-                    labelResultToppings.Text = labelResultToppings.Text + " , Tomatoes ";
+                ToppingsTotalPrice += Convert.ToSingle(chkExtraChees.Tag);
             }
 
+
+            if (chkOnion.Checked)
+            {
+                ToppingsTotalPrice += Convert.ToSingle(chkOnion.Tag);
+            }
+
+            if (chkMushrooms.Checked)
+            {
+                ToppingsTotalPrice += Convert.ToSingle(chkMushrooms.Tag);
+            }
+
+            if (chkOlives.Checked)
+            {
+                ToppingsTotalPrice += Convert.ToSingle(chkOlives.Tag);
+            }
+
+            if (chkTomatos.Checked)
+            {
+                ToppingsTotalPrice += Convert.ToSingle(chkTomatos.Tag);
+            }
+
+            if (chkGreenPeppers.Checked)
+            {
+                ToppingsTotalPrice += Convert.ToSingle(chkTomatos.Tag);
+            }
+
+
+
+            return ToppingsTotalPrice;
+
+
+
+        }
+
+        float GetSelectedCrutPrice()
+        {
+            if (rbThinCrust.Checked)
+
+                return Convert.ToSingle(rbThinCrust.Tag);
 
             else
-            {
-                if (labelResultToppings.Text == "Tomatoes")
-                    labelResultToppings.Text = "No Toppings";
-                else
-                    labelResultToppings.Text = labelResultToppings.Text.Replace(" , Tomatoes ", "");
-
-            }
-
+                return Convert.ToSingle(rbThickCrust.Tag);
 
         }
 
-        private void radioButtonMe_CheckedChanged(object sender, EventArgs e)
+        float CalculateTotalPrice()
         {
-            GetTotalPrice();
-
-            labelResultSize.Text = "Meduim";
+            return GetSelectedSizePrice() + CalculateToppingsPrice() + GetSelectedCrutPrice();
         }
 
-        private void radioButtonL_CheckedChanged(object sender, EventArgs e)
+        void UpdateTotalPrice()
         {
-            GetTotalPrice();
-            labelResultSize.Text = "Larg";
 
-        }
-
-        private void radioButtonThink_CheckedChanged(object sender, EventArgs e)
-        {
-            GetTotalPrice();
-            labelResultCrust.Text = "Think Crust";
+            lblTotalPrice.Text = "$" + CalculateTotalPrice().ToString();
 
         }
 
-        private void checkBoxOnion_CheckedChanged(object sender, EventArgs e)
+        void UpdateOrderSummary()
         {
-            GetTotalPrice();
-            if (checkBoxOnion.Checked)
-            {
-                if (labelResultToppings.Text == "No Toppings")
-                    labelResultToppings.Text = "Onion";
-                else
-                    labelResultToppings.Text = labelResultToppings.Text + " , Onion ";
-            }
-
-
-            else
-            {
-                if (labelResultToppings.Text == "Onion")
-                    labelResultToppings.Text = "No Toppings";
-                else
-                    labelResultToppings.Text = labelResultToppings.Text.Replace(" , Onion ", "");
-
-            }
+            UpdateSize();
+            UpdateToppings();
+            UpdateCrust();
+            UpdateWhereToEat();
+            UpdateTotalPrice();
 
         }
 
-        private void checkBoxMushrooms_CheckedChanged(object sender, EventArgs e)
+        void ResetForm()
         {
-            GetTotalPrice();
-            if (checkBoxMushrooms.Checked)
-            {
-                if (labelResultToppings.Text == "No Toppings")
-                    labelResultToppings.Text = "Mushrooms";
-                else
-                    labelResultToppings.Text = labelResultToppings.Text + " , Mushrooms ";
 
-            }
+            //reset Groups
+            gourbBoxSize.Enabled = true;
+            gbToppings.Enabled = true;
+            gbCrustType.Enabled = true;
+            gbWhereToEat.Enabled = true;
 
+            //reset Size
+            rbMedium.Checked = true;
 
-            else
-            {
-                if (labelResultToppings.Text == "Mushrooms")
-                    labelResultToppings.Text = "No Toppings";
-                else
-                    labelResultToppings.Text = labelResultToppings.Text.Replace(" , Mushrooms ", "");
+            //reset Toppings.
+            chkExtraChees.Checked = false;
+            chkOnion.Checked = false;
+            chkMushrooms.Checked = false;
+            chkOlives.Checked = false;
+            chkTomatos.Checked = false;
+            chkGreenPeppers.Checked = false;
 
-            }
+            //reset CrustType
+            rbThinCrust.Checked = true;
+
+            //reset Where to Eat
+            rbEatIn.Checked = true;
+
+            //Reset Order Button
+            btnOrderPizza.Enabled = true;
 
         }
 
-        private void checkBoxOlives_CheckedChanged(object sender, EventArgs e)
+        private void btnOrderPizza_Click(object sender, EventArgs e)
         {
-            GetTotalPrice();
-            if (checkBoxOlives.Checked)
+
+            if (MessageBox.Show("Confirm Order", "Confirm",
+                MessageBoxButtons.OKCancel, MessageBoxIcon.Question) == DialogResult.OK)
             {
-                if (labelResultToppings.Text == "No Toppings")
-                    labelResultToppings.Text = "Olives";
-                else
-                    labelResultToppings.Text = labelResultToppings.Text + " , Olives ";
+                MessageBox.Show("Order Placed Successfully", "Success",
+                    MessageBoxButtons.OK, MessageBoxIcon.Information);
 
-            }
-
-            else
-            {
-                if (labelResultToppings.Text == "Olives")
-                    labelResultToppings.Text = "No Toppings";
-                else
-                    labelResultToppings.Text = labelResultToppings.Text.Replace(" , Olives ", "");
-
-            }
-        }
-
-        private void checkBoxPeppers_CheckedChanged(object sender, EventArgs e)
-        {
-            GetTotalPrice();
-            if (checkBoxPeppers.Checked)
-            {
-                if (labelResultToppings.Text == "No Toppings")
-                    labelResultToppings.Text = "Green Peppers";
-                else
-                    labelResultToppings.Text = labelResultToppings.Text + " , Green Peppers ";
+                btnOrderPizza.Enabled = false;
+                gourbBoxSize.Enabled = false;
+                gbToppings.Enabled = false;
+                gbCrustType.Enabled = false;
+                gbWhereToEat.Enabled = false;
 
             }
             else
-            {
-                if (labelResultToppings.Text == "Green Peppers")
-                    labelResultToppings.Text = "No Toppings";
-                else
-                    labelResultToppings.Text = labelResultToppings.Text.Replace(", Green Peppers ", "");
-            }
+
+                MessageBox.Show("Update your order", "Update",
+                    MessageBoxButtons.OK, MessageBoxIcon.Exclamation);
         }
 
-        private void Form_Load(object sender, EventArgs e)
+        private void rbMedium_CheckedChanged(object sender, EventArgs e)
         {
-
-            GetTotalPrice();
+            UpdateSize();
         }
 
-        private void radioButtonIn_CheckedChanged(object sender, EventArgs e)
+        private void rbLarge_CheckedChanged(object sender, EventArgs e)
         {
-            labelResultWhere.Text = "Eat In";
+            UpdateSize();
         }
 
-        private void radioButtonOut_CheckedChanged(object sender, EventArgs e)
+        private void rbSamll_CheckedChanged(object sender, EventArgs e)
         {
-            labelResultWhere.Text = "Take Out";
+            UpdateSize();
+        }
+
+        private void chkExtraChees_CheckedChanged(object sender, EventArgs e)
+        {
+            UpdateToppings();
+        }
+
+        private void chkOnion_CheckedChanged(object sender, EventArgs e)
+        {
+            UpdateToppings();
+        }
+
+        private void chkMushrooms_CheckedChanged(object sender, EventArgs e)
+        {
+            UpdateToppings();
+        }
+
+        private void chkOlives_CheckedChanged(object sender, EventArgs e)
+        {
+            UpdateToppings();
+        }
+
+        private void chkTomatos_CheckedChanged(object sender, EventArgs e)
+        {
+            UpdateToppings();
+        }
+
+        private void chckGreenPeppers_CheckedChanged(object sender, EventArgs e)
+        {
+            UpdateToppings();
+        }
+
+        private void rbThinCrust_CheckedChanged(object sender, EventArgs e)
+        {
+            UpdateCrust();
+        }
+
+        private void rbThickCrust_CheckedChanged(object sender, EventArgs e)
+        {
+            UpdateCrust();
+        }
+
+        private void rbEatIn_CheckedChanged(object sender, EventArgs e)
+        {
+            UpdateWhereToEat();
+        }
+
+        private void rbTakeOut_CheckedChanged(object sender, EventArgs e)
+        {
+            UpdateWhereToEat();
+        }
+
+        private void Form1_Load(object sender, EventArgs e)
+        {
+            UpdateOrderSummary();
 
         }
 
-        private void buttonOP_Click(object sender, EventArgs e)
+        private void btnResetForm_Click(object sender, EventArgs e)
         {
-            if (MessageBox.Show("Confrim Order", "Confrim", MessageBoxButtons.OKCancel, MessageBoxIcon.Question) == DialogResult.OK)
-            {
-                MessageBox.Show("Order Placed Successfully", "Success", MessageBoxButtons.OK, MessageBoxIcon.Information);
-                groupBoxCrustType.Enabled = false;
-                groupBoxToppings.Enabled = false;
-                groupBoxWhereToEat.Enabled = false;
-                groupBoxSize.Enabled = false;
-            }
+            ResetForm();
+        }
+
+        private void lblCrustType_Click(object sender, EventArgs e)
+        {
 
         }
 
-        private void button2_Click(object sender, EventArgs e)
+        private void groupBox2_Enter(object sender, EventArgs e)
         {
-            groupBoxCrustType.Enabled = true;
-            groupBoxToppings.Enabled = true;
-            groupBoxWhereToEat.Enabled = true;
-            groupBoxSize.Enabled = true;
+
+        }
+
+        private void label2_Click(object sender, EventArgs e)
+        {
+
         }
     }
 }
+
+
